@@ -11,7 +11,7 @@ package frc.robot;
  * Add your docs here.
  */
 public class Constant {
-    public static double joystickDeadZone = 0.04;
+    public static double joystickDeadZone = 0.05;
 
     public static double driveRampRate = 0.7; //Neutral to full throttle in sec.
     public static double tankDriveSpeed = 0.3;

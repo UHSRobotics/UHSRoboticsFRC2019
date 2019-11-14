@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class OI {
   public static Joystick mainOI;
   public static Joystick subOI;
-  public static Joystick safeOI;
+  // public static Joystick safeOI;
   public static boolean usingMainOI = false;
   public static boolean usingSubOI = false;
 
@@ -37,7 +37,7 @@ public class OI {
     } else {
       usingSubOI = false;
     }
-    safeOI = new Joystick(2);
+    // safeOI = new Joystick(2);
     SmartDashboard.putBoolean("Main OI connected", usingMainOI);
     SmartDashboard.putBoolean("Sub OI connected", usingSubOI);
   }
@@ -59,7 +59,7 @@ public class OI {
       // only uses safeOI if mainOI not in use and override button not pressed
       return (correctJoystick(mainOI.getRawAxis(2)) != 0 || mainOI.getRawButton(5) || mainOI.getRawButton(6))
           ? correctJoystick(mainOI.getRawAxis(2))
-          : correctJoystick(safeOI.getRawAxis(2)) * 0.3;
+          : 0;
     } catch (Exception e) {
       return 0;
     }
@@ -75,7 +75,7 @@ public class OI {
       // only uses safeOI if mainOI not in use and override button not pressed
       return (correctJoystick(-mainOI.getRawAxis(1)) != 0 || mainOI.getRawButton(5) || mainOI.getRawButton(6))
           ? correctJoystick(-mainOI.getRawAxis(1))
-          : correctJoystick(-safeOI.getRawAxis(1)) * 0.6;
+          : 0;
     } catch (Exception e) {
       return 0;
     }
@@ -113,8 +113,8 @@ public class OI {
       output -= correctJoystick(subOI.getRawAxis(3)); // upward (right trigger)
       output *= 0.3;
     } else {
-      output = correctJoystick(safeOI.getRawAxis(4)); // downward (left trigger)
-      output -= correctJoystick(safeOI.getRawAxis(3)); // upward (right trigger)
+      // output = correctJoystickMore(safeOI.getRawAxis(4)); // downward (left trigger)
+      // output -= correctJoystickMore(safeOI.getRawAxis(3)); // upward (right trigger)
       output *= 0.3;
     }
 
@@ -137,7 +137,7 @@ public class OI {
   public static double getLift() {
     if (!usingSubOI)
       return 0;
-    double output = correctJoystick(-subOI.getRawAxis(1)); // Left joystick
+    double output = correctJoystick(subOI.getRawAxis(1)); // Left joystick
     /*
      * if (output == 0) { // -1~1 is reserved for the joystick if
      * (subOI.getRawButton(1)) output = 2; // hatch loading station (left btn) else
@@ -154,21 +154,23 @@ public class OI {
   }
 
   public static boolean getIntakePressed() {
-    if (!usingSubOI)
+    if (!usingSubOI)  
       return false;
     return (subOI.getRawButton(5) || mainOI.getRawButton(5) || mainOI.getRawButton(6)) ? subOI.getRawButton(5)
-        : safeOI.getRawButton(5);// Back Left btn
+        : false;// Back Left btn
   }
 
   public static boolean getRevIntakePressed() {
     if (!usingSubOI)
       return false;
     return (subOI.getRawButton(6) || mainOI.getRawButton(5) || mainOI.getRawButton(6)) ? subOI.getRawButton(6)
-        : safeOI.getRawButton(6);// Back Left btn
+        : false;// Back Left btn
   }
 
   public static double correctJoystick(double input) {
     return input > Constant.joystickDeadZone || input < -Constant.joystickDeadZone ? input : 0;
   }
-
+  public static double correctJoystickMore(double input) {
+    return input > Constant.joystickDeadZone*1.5 || input < -Constant.joystickDeadZone*1.5 ? input : 0;
+  }
 }

@@ -15,7 +15,7 @@ import frc.robot.RobotMap;
 
 public class DriveCommand extends Command {
 
-  double right, left, x, y;
+  double right, left, x, y, a;
 
   public DriveCommand() {
     requires(Robot.driveSubsystem);
@@ -39,36 +39,43 @@ public class DriveCommand extends Command {
     // acceleration = true;
     // }
 
+    a = Math.exp(-0.25);
+    a = a + Math.exp(12*(Math.abs(y)-1))*(1-a);
+    y = y * a;
+
+    // if (y > 0)
+    //   y = Math.pow(y, 1.8);
+    // else
+    //   y = -Math.pow(-y, 1.8);
+
     if (x > 0)
-      x = Math.pow(x, 0.6);
+      x = Math.pow(x, 1);
     else
-      x = -Math.pow(-x, 0.6);
+      x = -Math.pow(-x, 1);
 
-    if (x > 0.8)
-      x = 0.8;
-    else if (x < -0.8)
-      x = -0.8;
+    x=Math.abs(x)>0.8?0.8*Math.signum(x):x;
 
+    if(Math.abs(y)+Math.abs(x)>1)y=Math.signum(y)*(1-Math.abs(x));
     // lowers motor speed when necessary to prioritize steering control
     left = y + x;
     right = y - x;
-    if (left > 1) {
-      right -= left - 1;
-      left = 1;
-    } else if (left < -1) {
-      right -= left + 1;
-      left = -1;
-    }
-    if (right > 1) {
-      left -= right - 1;
-      right = 1;
-    } else if (right < -1) {
-      left -= right + 1;
-      right = -1;
-    }
+
+    // if (left > 1) {
+    //   right -= left - 1;
+    //   left = 1;
+    // } else if (left < -1) {
+    //   right -= left + 1;
+    //   left = -1;
+    // }
+    // if (right > 1) {
+    //   left -= right - 1;
+    //   right = 1;
+    // } else if (right < -1) {
+    //   left -= right + 1;
+    //   right = -1;
+    // }
 
     Robot.driveSubsystem.drive(right, left);
-
   }
 
   // Make this return true when this Command no longer needs to run execute()
